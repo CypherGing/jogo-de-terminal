@@ -1,48 +1,24 @@
+import os, json, nen
 
 
 class Entity:
     def __init__(self,
                  name: str,
-                 raca: str,
                  age: int,
-                 max_age,
                  sex: str,
-                 appearance: str,
-                 current_sanity: int,
-                 max_sanity: int,
-                 current_health: int,
-                 max_health: int,
-                 current_nen: int,
-                 max_nen: int,
-                 current_force: int,
-                 max_force: int,
                  strenght: int,
                  dexterity: int,
                  constituition: int,
                  agility: int,
                  intelligence: int,
                  perception: int,
-                 aura: int
-
+                 aura: int,
                  ) -> None:
         
         # Informações Básicas
         self.name = name
-        self.raca = raca
         self.age = age
-        self.max_age = age
         self.sex = sex
-        self.appearence = appearance
-
-        # Status Atual
-        self.current_sanity = current_sanity
-        self.max_sanity = max_sanity
-        self.current_health = current_health
-        self.max_health = max_health
-        self.current_nen = current_nen
-        self.max_nen = max_nen
-        self.current_force = current_force
-        self.max_force = max_force
 
         # Atributos Base
         self.strenght = strenght
@@ -52,8 +28,56 @@ class Entity:
         self.intelligence = intelligence
         self.perception = perception
         self.aura = aura
+    
 
+    def new_character(self):
+    
+        saves = r"saves"
+        saves_count = len([arquivo for arquivo in os.listdir(saves) if os.path.isfile(os.path.join(saves, arquivo))])
+        save_number = 0
+        if saves_count >= 0:
+            save_number = saves_count + 1
+
+        new_game_name = f"character00{save_number}.json"
+        
+        new_game = {"char_basic_info": {
+                    
+                    "name": self.name,
+                    "age": self.age,
+                    "sex": self.sex,
+                    },
+
+                    "char_atributes": {
+                            
+                        'strenght': self.strenght,
+                        'dexterity': self.dexterity,
+                        'constituition': self.constituition,
+                        'agility': self.agility,
+                        'intelligence': self.intelligence,
+                        'perception': self.perception,
+                        'aura': self.aura
+                        },
+
+                    "char_stats": {
+                            
+                        'sanity': self.perception+self.intelligence,
+                        'health': 5*self.constituition+15,
+                        'nen': self.aura*5,
+                        'force': self.agility+self.constituition+self.strenght,
+                        'inventory': 1+self.constituition+self.strenght/2
+                    }
+                }
         
 
-heroi = Entity("Joseph Joestar", "Humano", 22, "Masculino", "Bonitão")
-print(heroi.name)
+        with open(f"saves/{new_game_name}", 'w', encoding='utf-8') as newgame_json:
+            json.dump(new_game, newgame_json, ensure_ascii=False, indent=4)
+
+        print(f"Novo jogo salvo em: saves/{new_game_name}")
+        print(new_game["char_basic_info"])
+        return new_game_name
+
+        
+        
+
+#hero = Entity("Rebeca Calhau", 27, "Feminino", 4, 4, 4, 4, 4, 4, 4).new_character()
+#nen.nen_talent(hero, nen.roll_nentype())
